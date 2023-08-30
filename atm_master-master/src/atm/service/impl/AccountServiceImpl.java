@@ -11,24 +11,47 @@ public class AccountServiceImpl implements AccountService {
     private final AccountDao accountDao = new AccountDao();
     private final Random random = new Random();
     private final Scanner scanner = new Scanner(System.in);
-    UserAccount userAccount1 = new UserAccount();
-  UserAccount frien=new UserAccount();
+
+    public enum Color {
+        ANSI_RESET("\u001B[0m"),
+        ANSI_BLACK("\u001B[30m"),
+        ANSI_RED("\u001B[31m"),
+        ANSI_GREEN("\u001B[32m"),
+        ANSI_YELLOW("\u001B[33m"),
+        ANSI_BLUE("\u001B[34m"),
+        ANSI_PURPLE("\u001B[35m"),
+        ANSI_CYAN("\u001B[36m"),
+        ANSI_WHITE("\u001B[37m");
+        private final String color;
+
+        Color(String color) {
+            this.color = color;
+        }
+
+        @Override
+        public String toString() {
+            return color;
+        }
+    }
+
 
     @Override
     public void singUp(String name, String lastName) {
+        UserAccount userAccount2 = new UserAccount();
         try {
-
-            userAccount1.setName(name);
-            userAccount1.setLastName(lastName);
+            userAccount2.setName(name);
+            userAccount2.setLastName(lastName);
             String cardNumber = String.valueOf(random.nextInt(9999999, 99999999));
             String pinCode = String.valueOf(random.nextInt(999, 9999));
-            userAccount1.setCardNumber(cardNumber);
-            userAccount1.setPinCode(pinCode);
+            userAccount2.setCardNumber(cardNumber);
+            userAccount2.setPinCode(pinCode);
 
-            accountDao.getUserAccounts().add(userAccount1);
-        System.out.println(userAccount1);
+            accountDao.getUserAccounts().add(userAccount2);
+
+            System.out.println(userAccount2);
+
         } catch (IllegalArgumentException a) {
-            System.out.println("\u001B[31m" + "напишите правильно" + "\001B[0m");
+            System.out.println(Color.ANSI_RED+ "напишите правильно" );
         }
         //"Sign up" значит "Зарегестрироваться" для нового пользователя.
 
@@ -36,6 +59,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void singIn(String name, String lastName) {
+        UserAccount userAccount1 = new UserAccount();
         System.out.println("Добро пожаловать в банкомат");
         System.out.println("Напишите имя ");
         name = scanner.nextLine();
@@ -65,12 +89,11 @@ public class AccountServiceImpl implements AccountService {
                     }
 
                     break;
-                    case 3:
+                    case 3: {
                         System.out.println("напишите номер карты друга");
-                        int summa = scanner.nextInt();
-                        UserAccount userAccount = new UserAccount();
-                        sendToFriend(userAccount.getCardNumber());
-                        userAccount.setBalance(userAccount1.getBalance() - summa);
+                        String s =String.valueOf(scanner.nextInt());
+                        sendToFriend(s);
+                    }
                         break;
                     case 4:
                         withdrawMoney(scanner.nextInt());
@@ -88,23 +111,22 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void balance(String cardNumber, String pinCode) {
+        UserAccount userAccount1 = new UserAccount();
         if (cardNumber.equals(userAccount1.getCardNumber()) && pinCode.equals(userAccount1.getPinCode())) {
             System.out.println(userAccount1.getBalance());
         } else {
-            System.out.println("неправильно номер карта или pin-кодд");
+            System.out.println("неправильно номер карта или pin-код");
         }
     }
 
     @Override
     public void deposit(String cardNumber, String pinCode) {
+        UserAccount userAccount1 = new UserAccount();
         try {
             if (cardNumber.equals(userAccount1.getCardNumber()) && pinCode.equals(userAccount1.getPinCode())) {
                 System.out.println("Сколько вы хотите внести на депозит");
                 int d = scanner.nextInt();
-                for (UserAccount userAccount : accountDao.getUserAccounts()) {
-                    userAccount.setBalance(d + userAccount.getBalance());
-                    System.out.println("ваш баланс : " + " " + userAccount.getBalance());
-                }
+                    System.out.println("ваш баланс : "+ " " + d);
             } else {
                 System.out.println("неправильно номер карта или pin-код");
             }
@@ -115,36 +137,45 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void sendToFriend(String friendCardNumber) {
-        System.out.print("Введите номер своей карты: ");
-        String num = scanner.nextLine();
-        System.out.print("Ваш баланс: ");
-        for (UserAccount userAccount : accountDao.getUserAccounts()) {
-            if (userAccount.getCardNumber().equals(num)) {
-                System.out.println(userAccount.getBalance());
-            }
-        }
-        System.out.print("Введите сумму которую хотите отправить другу: ");
-        int sum = scanner.nextInt();
-        for (UserAccount us : accountDao.getUserAccounts()) {
-            if (us.getCardNumber().equals(num)) {
-                if (us.getBalance() >= sum) {
-                    int balance = us.getBalance() - sum;
-                    us.setBalance(balance);
-                    System.out.println("Ваш баланс: " + us.getBalance());
+            System.out.print("Введите номер своей карты: ");
+            String num = scanner.nextLine();
+            System.out.print("Ваш баланс: ");
+            for (UserAccount userAccount : accountDao.getUserAccounts()) {
+                if (userAccount.getCardNumber().equals(num)) {
+                    System.out.println(userAccount.getBalance());
                 }
             }
-        }
-        for (UserAccount u : accountDao.getUserAccounts()) {
-            if (friendCardNumber.equals(u.getCardNumber())) {
-                int balance = u.getBalance() + sum;
-                u.setBalance(balance);
-                System.out.println("Баланс вашего друга: " + u.getBalance());
+            System.out.print("Введите сумму которую хотите отправить другу: ");
+            int sum = scanner.nextInt();
+            for (UserAccount us : accountDao.getUserAccounts()) {
+                if (us.getCardNumber().equals(num)) {
+                    if (us.getBalance() >= sum) {
+                        int balance = us.getBalance() - sum;
+                        us.setBalance(balance);
+                        System.out.println("Ваш баланс: " + us.getBalance());
+                    }
+                }
             }
-        }
-
-
-
-    }
+            for (UserAccount u : accountDao.getUserAccounts()) {
+                if (friendCardNumber.equals(u.getCardNumber())) {
+                    int balance = u.getBalance() + sum;
+                    u.setBalance(balance);
+                    System.out.println("Баланс вашего друга: " + u.getBalance());
+                }
+            }}
+//        UserAccount friendAccount= new UserAccount();
+//        System.out.println("Сколько денег хотите перевести");
+//        int s=scanner.nextInt();
+//        for (int i = 0; i <accountDao.getUserAccounts().size() ; i++) {
+//            UserAccount  userAccount=accountDao.getUserAccounts().get(i);
+//            if (userAccount.getCardNumber().equals(friendCardNumber)){
+//          friendAccount=userAccount;
+//            }
+//        }
+//        for (int i = 0; i <accountDao.getUserAccounts().size() ; i++) {
+//            UserAccount userAccount=accountDao.getUserAccounts().get(i);
+//            if (userAccount.getCardNumber().equals())
+//        }
 
     @Override
     public void withdrawMoney(int amount) {
