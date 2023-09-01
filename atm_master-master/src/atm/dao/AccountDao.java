@@ -14,5 +14,12 @@ public class AccountDao {
 
     public void setUserAccounts(List<UserAccount> userAccounts) {
         this.userAccounts = userAccounts;
+
     }
-}
+
+        @Override
+        public String toString() {
+            return getUserAccounts().toString();
+        }
+    }
+

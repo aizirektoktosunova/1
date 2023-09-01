@@ -5,10 +5,13 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        AccountService accountService=new AccountServiceImpl();
-        accountService.singUp("Aidai","Ysmailova");
-        accountService.singUp("Aizirek","Toktosunova");
-        accountService.singIn("Aizirek","Toktosunova" );
+
+        AccountServiceImpl accountService1=new AccountServiceImpl();
+        accountService1.singUp("Aidai","Ysmailova");
+        accountService1.singUp("Aizirek","Toktosunova");
+        accountService1.singUp("Aidana","Kamchybekovna");
+        accountService1.account();
+
 
 
 
